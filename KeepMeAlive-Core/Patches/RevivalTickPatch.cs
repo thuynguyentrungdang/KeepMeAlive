@@ -33,6 +33,9 @@ namespace KeepMeAlive.Patches
                     PostRevivalController.TickCooldown(__instance, st);
                 }
 
+                // Update ragdolls on remote copies and move the local body.
+                DownedDragController.Tick(__instance);
+
                 if (!__instance.IsYourPlayer) return;
 
                 DownedStateController.TickResync(__instance);

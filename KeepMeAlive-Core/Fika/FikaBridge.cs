@@ -110,8 +110,18 @@ namespace KeepMeAlive.Fika
                 cooldownTimer         = st.CooldownTimer,
                 reviverId             = st.CurrentReviverId ?? "",
                 reviveRequestedSource = st.ReviveRequestedSource,
-                livesRemaining        = st.LivesRemaining
+                livesRemaining        = st.LivesRemaining,
+                draggerId             = st.CurrentDraggerId ?? "",
+                limp                  = st.IsLimp
             };
+            SendPacket(ref packet);
+        }
+
+        //====================[ Drag Packet Senders ]====================
+        public static void SendDragStatePacket(string reviveeId, string draggerId, bool active)
+        {
+            RevivalDebugLog.LogNetworkTrace($"Sending drag packet: {draggerId} {(active ? "dragging" : "released")} {reviveeId}");
+            DragStatePacket packet = new() { reviveeId = reviveeId, draggerId = draggerId, active = active };
             SendPacket(ref packet);
         }
 

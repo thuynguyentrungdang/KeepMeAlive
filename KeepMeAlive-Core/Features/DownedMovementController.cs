@@ -438,7 +438,7 @@ namespace KeepMeAlive.Features
             switch (st.State)
             {
                 case RMState.BleedingOut:
-                    bool frozen = st.IsBeingRevived || st.IsSelfReviving || st.SelfReviveAwaitingAuth;
+                    bool frozen = st.IsLimp || st.IsBeingRevived || st.IsSelfReviving || st.SelfReviveAwaitingAuth;
                     return frozen ? 0f : Mathf.Clamp01(SyncedServerConfigStore.Config.Gameplay.Revival.DownedMovementSpeedPercent / 100f);
                 case RMState.Reviving:
                     return 0f;

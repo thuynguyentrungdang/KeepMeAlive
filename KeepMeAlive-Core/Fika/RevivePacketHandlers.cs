@@ -74,6 +74,8 @@ namespace KeepMeAlive.Fika
             playerState.FinalizedReviveCycleId = -1;
             playerState.CriticalTimer = packet.timeRemaining;
             playerState.LivesRemaining = packet.livesRemaining;
+            // Limp until the owner's resync says they moved.
+            playerState.IsLimp = true;
             playerState.ClearReviveSession();
             playerState.KillOverride = false;
 
@@ -337,6 +339,7 @@ namespace KeepMeAlive.Fika
             {
                 RevivalDebugLog.LogNetworkTrace($"[Packet] StateReset: {packet.playerId} died");
                 RMSession.SetPlayerState(packet.playerId, RMState.None);
+                // Keep the ragdoll pose until Fika's death sync creates the corpse.
                 playerState.KillOverride = true;
                 playerState.InvulnerabilityTimer = 0f;
                 playerState.CriticalTimer = 0f;
@@ -349,6 +352,7 @@ namespace KeepMeAlive.Fika
                 playerState.KillOverride = false;
                 playerState.InvulnerabilityTimer = 0f;
                 playerState.CriticalTimer = 0f;
+                playerState.IsLimp = false;
             }
 
             RevivalDebugLog.LogStateTrace("PlayerStateResetPacket", packet.playerId, prevState, playerState.State,
@@ -388,6 +392,8 @@ namespace KeepMeAlive.Fika
             st.CurrentReviverId      = packet.reviverId;
             st.ReviveRequestedSource = packet.reviveRequestedSource;
             st.LivesRemaining        = packet.livesRemaining;
+            st.IsLimp                = packet.limp;
+            DownedDragController.ApplyAuthoritativeDragger(packet.playerId, st, packet.draggerId);
 
             if (st.State == incoming) return;
 

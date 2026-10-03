@@ -20,6 +20,12 @@ namespace KeepMeAlive.Features
         public static bool Has(string profileId) =>
             !string.IsNullOrEmpty(profileId) && Cache.TryGetValue(profileId, out var bi) && bi != null;
 
+        public static bool TryGet(string profileId, out BodyInteractable interactable)
+        {
+            interactable = null;
+            return !string.IsNullOrEmpty(profileId) && Cache.TryGetValue(profileId, out interactable) && interactable != null;
+        }
+
         //====================[ Public API ]====================
         public static bool TryRouteActions(GamePlayerOwner owner, IInteractive interactive, ref AvailableInteractionState result)
         {

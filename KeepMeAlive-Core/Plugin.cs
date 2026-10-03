@@ -62,6 +62,7 @@ namespace KeepMeAlive
         {
             new RevivalTickPatch().Enable();
             new DeathPatch().Enable();
+            new RagdollDeathHandoffPatch().Enable();
             new RaidExtractSafetyPatch().Enable();
             new RaidCoopStopSafetyPatch().Enable();
             new DownedFikaWeaponProceedBlockPatch().Enable();

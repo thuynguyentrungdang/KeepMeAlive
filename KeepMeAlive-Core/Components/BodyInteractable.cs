@@ -256,6 +256,16 @@ namespace KeepMeAlive.Components
             return null;
         }
 
+        // Use triggers while the body is ragdolled to avoid proxy collisions with its bones.
+        public void SetRagdollInert(bool inert)
+        {
+            for (int i = _colliders.Count - 1; i >= 0; i--)
+            {
+                if (_colliders[i] == null) { _colliders.RemoveAt(i); continue; }
+                _colliders[i].isTrigger = inert;
+            }
+        }
+
         // Skips the collider pass when the state is unchanged.
         private void SetCollidersEnabled(bool enabled)
         {
@@ -341,6 +351,25 @@ namespace KeepMeAlive.Components
                         Action = () => OnRevive(owner),
                         Name = PlayerFacingMessages.Interaction.ReviveAction,
                         Disabled = !canRevive || !hasLives
+                    });
+                }
+
+                if (reviveeState.CurrentDraggerId == owner.Player.ProfileId)
+                {
+                    actions.Actions.Add(new InteractionAction
+                    {
+                        Action = () => DownedDragController.StopDrag(owner.Player, "menu"),
+                        Name = PlayerFacingMessages.Interaction.ReleaseAction,
+                        Disabled = false
+                    });
+                }
+                else if (!reviveeState.IsBeingDragged)
+                {
+                    actions.Actions.Add(new InteractionAction
+                    {
+                        Action = () => DownedDragController.StartDrag(owner, Revivee),
+                        Name = PlayerFacingMessages.Interaction.DragAction,
+                        Disabled = !DownedDragController.CanStartDrag(owner.Player, Revivee, reviveeState)
                     });
                 }
 

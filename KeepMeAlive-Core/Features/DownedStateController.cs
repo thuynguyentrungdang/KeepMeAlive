@@ -189,9 +189,8 @@ namespace KeepMeAlive.Features
                 if (player.IsYourPlayer)
                 {
                     if (Cfg.Revival.BlockUiWhenDowned) DownedUiBlocker.SetBlocked(true);
-                    // st.LivesRemaining is kept current by the raid-start reset and by
-                    // RevivalController's post-revive coroutine (see NotifyReviveComplete
-                    // usage) - no blocking round-trip needed here.
+                    // LivesRemaining is updated at raid start and after a revive.
+                    DownedRagdollController.Begin(st);
                     FikaBridge.SendBleedingOutPacket(id, st.CriticalTimer, st.LivesRemaining);
                     RevivalAuthority.NotifyBeginCritical(id);
                     st.ResyncCooldown = -1f;
@@ -256,6 +255,7 @@ namespace KeepMeAlive.Features
                 VFX_UI.HideAll();
                 DownedUiBlocker.SetBlocked(false);
                 DownedMovementController.ScrubDownedInputLocks();
+                DownedDragController.Clear();
                 GhostMode.ClearAll();
                 BodyInteractableRuntime.Clear();
                 DeathMode.ClearCaches();
@@ -321,6 +321,9 @@ namespace KeepMeAlive.Features
 
                 st.LastObservedState = st.State;
             }
+
+            // Check this before critical-state cleanup so movement can end the limp state.
+            DownedRagdollController.TickLocal(player, st);
 
             if (!st.IsCritical)
             {

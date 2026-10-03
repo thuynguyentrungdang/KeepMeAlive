@@ -75,6 +75,8 @@ namespace KeepMeAlive.Fika.Packets
         public string reviverId;
         public int    reviveRequestedSource; // ReviveSource cast to int (0=Self, 1=Team)
         public int    livesRemaining;
+        public string draggerId;             // Owner's current dragger (empty when released)
+        public bool   limp;                  // Whether the player is still limp
 
         public void Deserialize(NetDataReader reader)
         {
@@ -86,6 +88,8 @@ namespace KeepMeAlive.Fika.Packets
             reviverId             = reader.GetString();
             reviveRequestedSource = reader.GetInt();
             livesRemaining        = reader.GetInt();
+            draggerId             = reader.GetString();
+            limp                  = reader.GetBool();
         }
 
         public void Serialize(NetDataWriter writer)
@@ -98,6 +102,8 @@ namespace KeepMeAlive.Fika.Packets
             writer.Put(reviverId ?? "");
             writer.Put(reviveRequestedSource);
             writer.Put(livesRemaining);
+            writer.Put(draggerId ?? "");
+            writer.Put(limp);
         }
     }
 
@@ -218,6 +224,29 @@ namespace KeepMeAlive.Fika.Packets
             writer.Put(itemId ?? "");
             writer.Put(success);
             writer.Put(reason ?? "");
+        }
+    }
+
+    //====================[ Drag Packets ]====================
+    // Shares drag start and release events with all peers.
+    public struct DragStatePacket : INetSerializable
+    {
+        public string reviveeId;
+        public string draggerId;
+        public bool active;
+
+        public void Deserialize(NetDataReader reader)
+        {
+            reviveeId = reader.GetString();
+            draggerId = reader.GetString();
+            active = reader.GetBool();
+        }
+
+        public void Serialize(NetDataWriter writer)
+        {
+            writer.Put(reviveeId ?? "");
+            writer.Put(draggerId ?? "");
+            writer.Put(active);
         }
     }
 }

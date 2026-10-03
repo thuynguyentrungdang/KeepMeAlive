@@ -50,6 +50,28 @@ namespace KeepMeAlive.Patches
         }
     }
 
+    //====================[ RagdollDeathHandoffPatch ]====================
+    // Restore the remote body's bones before the corpse is created.
+    internal class RagdollDeathHandoffPatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod() =>
+            AccessTools.Method(typeof(Player), nameof(Player.OnDead));
+
+        [PatchPrefix]
+        private static void Prefix(Player __instance)
+        {
+            try
+            {
+                if (__instance == null || __instance.IsYourPlayer || __instance.IsAI) return;
+                BodyRagdoll.ReleaseForDeath(__instance);
+            }
+            catch (Exception ex)
+            {
+                Plugin.LogSource.LogError($"[RagdollDeathHandoff] error: {ex.Message}");
+            }
+        }
+    }
+
     //====================[ Raid Termination Patches ]====================
     // Notify the downed-state controller when CoopGame extracts or stops.
     internal class RaidExtractSafetyPatch : ModulePatch

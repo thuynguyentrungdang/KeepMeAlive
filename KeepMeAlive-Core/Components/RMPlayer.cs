@@ -44,6 +44,17 @@ namespace KeepMeAlive.Components
         // 0 = Self, 1 = Team
         public int ReviveRequestedSource { get; set; }
         public string CurrentReviverId { get; set; } = string.Empty;
+        // Profile id of the teammate currently dragging this (downed) player; empty when nobody is.
+        public string CurrentDraggerId { get; set; } = string.Empty;
+        public bool IsBeingDragged => !string.IsNullOrEmpty(CurrentDraggerId);
+        // Time.time of the last local change to CurrentDraggerId; a resync from the owner older than the change
+        // must not undo it while the change is still in flight.
+        public float DragClaimTime { get; set; } = -100f;
+        // Shown as a ragdoll. Set on going down (every peer) and while dragged; the owner clears it once they
+        // move and its resync clears it everywhere else.
+        public bool IsLimp { get; set; }
+        // Time.time the owner went limp (owner only), for the minimum limp time.
+        public float LimpStartTime { get; set; }
         // Server-authoritative per-raid lives counter, shared across self- and team-revive.
         public int LivesRemaining { get; set; }
 

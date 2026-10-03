@@ -30,6 +30,10 @@ namespace KeepMeAlive.Helpers
             public const string MedPickerName = "Med Picker";
             public const string CancelAction = "Cancel";
             public const string SearchAction = "Search";
+            public const string DragAction = "Drag";
+            public const string ReleaseAction = "Release";
+            public const string DragHint = "Dragging teammate - stand up, draw a weapon or turn away to let go";
+            public const string DragReleased = "Released teammate";
             public const string LootProtectedItem = "Equipped gear can't be taken from a downed teammate";
         }
 
